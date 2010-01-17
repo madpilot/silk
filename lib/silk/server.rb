@@ -1,5 +1,4 @@
 require 'json'
-require 'open4'
 require 'sinatra/base'
 
 module Silk

@@ -13,7 +13,6 @@ begin
     gem.authors = ["Myles Eftos"]
     
     gem.add_dependency 'daemons'
-    gem.add_dependency 'open4'
     gem.add_dependency 'SyslogLogger'
     
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
