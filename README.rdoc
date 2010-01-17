@@ -4,7 +4,43 @@ Silk is a a flexible framework for building web hosting consoles. It's based aro
 It allows you to build rake tasks to do things like add users, create email addresses etc. Then you simply wrap the response in a JSON
 envelope, and you can then build your own custom web hosting console.
 
+This gem is just the runner, that need to be installed on all client servers.
+
+== Installation
+
+(Requires Gemcutter)
+
+gem install silk
+
+Create /etc/silk and drop in a Rakefile - you can also add *.rake files in /etc/silk (or $HOME/.silk/) and they will automatically be read in.
+
+== Usage
+
+The gem should install an executable called silk
+
+run silk -h for full argument descriptions.
+
+The system automatically converts the rest URL (only GETs at the moment) into a rake task name - if the name doesn't exist, you'll get a 404. Any query params get passed into the task
+
+So http://localhost:8888/users/get?login=myles
+
+would run the users:get task. do something like this in the rake task:
+
+namespace :users do
+  task :get do |t, args|
+    # args[:login] will be populated with myles
+  end
+end
+
+NOTE: The idea is you write your own rake task to do stuff, and then interface them how you want. The project doesn't care what data you transfer and represent, although it would be possible to share rakefiles and interfaces for common tasks.
+
+By default it runs on port 8888 and will probably need to be run as root to make sure you can do all the stuff you need to do. 
+
+Eventually it'll support SSL certificates etc, but until then, I suggest you either use SSH tunnels, and/or (at the very least) lock down via a firewall. You could also build a rack.up file, and run it behind a web server that gives you more control (Rack.up file is on the todo list).
+
 == Status
+
+This is a really early release, that still needs formal testing (This is so far more proof of concept at this point), and may blow up at any given moment. Feel free to fork and help out.
 
 == Note on Patches/Pull Requests
  
