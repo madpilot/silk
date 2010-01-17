@@ -5,14 +5,18 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "silk"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.executables = "silk"
+    gem.summary = %Q{A framework for creating a hosting console}
+    gem.description = %Q{It allows you to write rake tasks to do common tasks, such as creating email addresses, adding users etc. Silk provides a HTTP wrapper the the rake tasks, and allows communication via JSON objects, which makes it dead easy for them to be called from a web app.}
     gem.email = "myles@madpilot.com.au"
     gem.homepage = "http://github.com/madpilot/silk"
     gem.authors = ["Myles Eftos"]
-    gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
+    
     gem.add_dependency 'daemons'
+    gem.add_dependency 'open4'
     gem.add_dependency 'SyslogLogger'
+    
+    gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
@@ -39,7 +43,6 @@ rescue LoadError
 end
 
 task :test => :check_dependencies
-
 task :default => :test
 
 require 'rake/rdoctask'

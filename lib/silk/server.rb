@@ -1,5 +1,5 @@
 require 'json'
-require 'open3'
+require 'open4'
 require 'sinatra/base'
 
 module Silk
@@ -10,27 +10,37 @@ module Silk
       options = Silk.options
       task = c.gsub("/", ":")
       
-      unless Silk::Tasks.list.include?(task)
+      tasks = Silk::Tasks.new
+      unless tasks.list.include?(task)
         not_found("Not Found".to_json)
       end
 
-      puts params.inspect
-
-      stdout, stderr = '', ''
       results = { :stdout => '', :stderr => '' }
-
-      cmd = [ 'rake', '-s' ]
-      options[:filter_paths].each do |path|
-        cmd += [ '-R', path ]
+      params.delete("captures")
+      
+      stdout_read, stdout_write = IO.pipe
+      stderr_read, stderr_write = IO.pipe
+      pid = Process.fork do
+        $stdout.reopen stdout_write
+        $stderr.reopen stderr_write
+        stdout_read.close
+        stderr_read.close
+        tasks.run(task, params)
       end
-      cmd << task
-
-      Open3.popen3(cmd.join(' ')) do |i, o, e|
-        results[:stdout] = o.read
-        results[:stderr] = e.read
+      
+      stdout_write.close
+      stderr_write.close
+      stdout_read.each do |line|
+        results[:stdout] += line
       end
-
-      if results[:stderr] != ""
+      stderr_read.each do |line|
+        results[:stderr] += line
+      end
+      Process.waitpid(pid)
+    
+      headers('X_PROCESS_EXIT_STATUS' => $?.exitstatus.to_s)
+      
+      if $?.exitstatus != 0
         error(500, results[:stderr])
       else
         results[:stdout]

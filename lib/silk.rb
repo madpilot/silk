@@ -19,7 +19,14 @@ module Silk
     end
     
     Silk.options = options
-    Server.run! :host => options[:bind], :port => options[:port], :environment => :production
+
+    old_proc_name = $0
+    pwd = Dir.pwd
+    Daemons.call(options) do
+      $0 = old_proc_name
+      Dir.chdir pwd
+      Server.run! :host => options[:bind], :port => options[:port], :environment => :production
+    end
   end
 
   def self.options

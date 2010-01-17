@@ -1,6 +1,10 @@
 = silk
 
-Description goes here.
+Silk is a a flexible framework for building web hosting consoles. It's based around a rake task runner that has a HTTP/JSON interface.
+It allows you to build rake tasks to do things like add users, create email addresses etc. Then you simply wrap the response in a JSON
+envelope, and you can then build your own custom web hosting console.
+
+== Status
 
 == Note on Patches/Pull Requests
  
