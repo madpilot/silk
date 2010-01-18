@@ -40,9 +40,9 @@ module Silk
       headers('X_PROCESS_EXIT_STATUS' => $?.exitstatus.to_s)
       
       if $?.exitstatus != 0
-        error(500, results[:stderr])
+        error(500, results[:stderr].strip)
       else
-        results[:stdout]
+        results[:stdout].strip
       end
     end
   end

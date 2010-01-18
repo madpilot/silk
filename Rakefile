@@ -13,9 +13,14 @@ begin
     gem.authors = ["Myles Eftos"]
     
     gem.add_dependency 'daemons'
+    gem.add_dependency 'json'
+    gem.add_dependency 'sinatra'
     gem.add_dependency 'SyslogLogger'
     
-    gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
+    gem.add_development_dependency "thoughtbot-shoulda"
+    gem.add_development_dependency "rack-test"
+    gem.add_development_dependency "redgreen"
+    gem.add_development_dependency "mocha"
   end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"

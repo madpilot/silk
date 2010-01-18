@@ -1,7 +1,7 @@
 require 'helper'
 
 class TestSilk < Test::Unit::TestCase
-  should "probably rename this file and start testing for real" do
-    flunk "hey buddy, you should probably rename this file and start testing for real"
+  context '' do
+     
   end
 end
