@@ -1,15 +1,15 @@
 require 'test_helper'
 
-class TestSilk < Test::Unit::TestCase
+class TestServer < Test::Unit::TestCase
   include Rack::Test::Methods
 
   def app
     Silk::Server
   end
 
-  context '' do
+  context 'TestServer' do
     setup do
-      Silk.options = { :filter_paths => File.join(File.dirname(File.expand_path(__FILE__)), 'rakefiles') }
+      Silk.options = { :recipe_paths => File.join(File.dirname(File.expand_path(__FILE__)), 'rakefiles') }
     end
 
     should "return a 404 if the rake task is not found" do

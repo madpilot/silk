@@ -1,9 +1,9 @@
 require 'test_helper'
 
-class TestSilk < Test::Unit::TestCase
-  context '' do
+class TestTasks < Test::Unit::TestCase
+  context 'TestTasks' do
     setup do
-      Silk.options = { :filter_paths => File.join(File.dirname(File.expand_path(__FILE__)), 'rakefiles') }
+      Silk.options = { :recipe_paths => File.join(File.dirname(File.expand_path(__FILE__)), 'rakefiles') }
       @task = Silk::Tasks.new
     end
 
@@ -16,6 +16,7 @@ class TestSilk < Test::Unit::TestCase
     end
 
     should "run a task if it exists" do
+      # I'm guessing this test fails because STDOUT and STDERR are already being captured
       stdout_read, stdout_write = IO.pipe
       stderr_read, stderr_write = IO.pipe
       pid = Process.fork do
@@ -39,11 +40,11 @@ class TestSilk < Test::Unit::TestCase
       end
       Process.waitpid(pid)
  
-      assert_equal "Level_1".to_json, stdout.strip
-      assert_equal "".to_json, stderr.strip
+      assert_equal "Level 1".to_json, stdout.strip
+      assert_equal "", stderr.strip
     end
 
-    should "run a task and pass in arrguments if it exists" do
+    should "run a task and pass in arguments if it exists" do
       # I'm guessing this test fails because STDOUT and STDERR are already being captured
       stdout_read, stdout_write = IO.pipe
       stderr_read, stderr_write = IO.pipe
@@ -52,7 +53,7 @@ class TestSilk < Test::Unit::TestCase
         $stderr.reopen stderr_write
         stdout_read.close
         stderr_read.close
-        @task.run("level_2_with_args", { 'param_1' => '1' })
+        @task.run("level_1:level_2_with_args", { 'param_1' => '1' })
       end
       
       stdout_write.close
@@ -69,9 +70,7 @@ class TestSilk < Test::Unit::TestCase
       Process.waitpid(pid)
  
       assert_equal(("Level 2: " + { 'param_1' => '1' }.inspect).to_json, stdout.strip)
-      assert_equal "".to_json, stderr.strip
+      assert_equal "", stderr.strip
     end
-
-    should "run the task only once if a new Application is built"
   end
 end

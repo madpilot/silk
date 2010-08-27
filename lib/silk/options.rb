@@ -24,11 +24,11 @@ class Options
         options[:ontop] = true
       end
  
-      options[:filter_paths] = [ File.join('', 'etc', 'silk') ] 
-      options[:filter_paths] << File.join(ENV['HOME'], '.silk') if ENV['HOME']
+      options[:recipe_paths] = [ File.join('', 'etc', 'silk') ] 
+      options[:recipe_paths] << File.join(ENV['HOME'], '.silk') if ENV['HOME']
       
       opts.on('-r [recipe]', '--recipes [recipe]', /.+/, 'Reads in additional recipes') do |recipes|
-        options[:filter_paths] << recipes
+        options[:recipe_paths] << recipes
       end
  
       options[:port] = 8888

@@ -6,7 +6,7 @@ module Silk
       Rake::Task.clear
       @app = Rake::Application.new
       @app.init
-      Silk.options[:filter_paths].each do |path|
+      Silk.options[:recipe_paths].each do |path|
         FileList.new("#{path}/*.rake").each do |file|
           @app.add_import(file)
         end
@@ -18,7 +18,7 @@ module Silk
       return Rake::Task.tasks.map { |task| task.name }
     end
 
-    def run(task, arguments)
+    def run(task, arguments = {})
       Rake::Task[task].execute(arguments)
     end
   end
