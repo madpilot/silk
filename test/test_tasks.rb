@@ -40,7 +40,7 @@ class TestTasks < Test::Unit::TestCase
       end
       Process.waitpid(pid)
  
-      assert_equal "Level 1".to_json, stdout.strip
+      assert_equal "Level 1", stdout.strip
       assert_equal "", stderr.strip
     end
 
@@ -69,7 +69,7 @@ class TestTasks < Test::Unit::TestCase
       end
       Process.waitpid(pid)
  
-      assert_equal(("Level 2: " + { 'param_1' => '1' }.inspect).to_json, stdout.strip)
+      assert_equal(("Level 2: " + { 'param_1' => '1' }.inspect), stdout.strip)
       assert_equal "", stderr.strip
     end
   end

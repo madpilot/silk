@@ -24,7 +24,9 @@ for full argument descriptions.
 
 The system automatically converts the rest URL (only GETs at the moment) into a rake task name - if the name doesn't exist, you'll get a 404. Any query params get passed into the task
 
-So http://localhost:8888/users/get?login=myles
+So http://localhost:8888/users/get?login=myles (Returns Plain text)
+So http://localhost:8888/users/get.json?login=myles (Returns JSON)
+So http://localhost:8888/users/get.xml?login=myles (Returns XML)
 
 would run the users:get task. do something like this in the rake task:
 
@@ -34,9 +36,17 @@ would run the users:get task. do something like this in the rake task:
     task :get do |t, args|
       # args[:login] will be populated with myles
       if args[:login]
-        puts "Success".to_json
+        respond_to do |format|
+          format.text { "Success" }
+          format.xml { "<body>Success</body>" }
+          format.json { "Success".to_json }
+        end
       else
-        $stderr.puts "Fail".to_json
+        error_respond_to do |format|
+          format.text { "Fail" }
+          format.xml { "<error>Fail</error>" }
+          format.json { "Fail".to_json }
+        end
         exit(-1)
       end
     end
@@ -53,8 +63,6 @@ Eventually it'll support SSL certificates etc, but until then, I suggest you eit
 There is a test suite. It uses shoulda + mocha + test::rack
 
 If you are going to submit patches, please try to make sure the tests pass, and that you have created a test covering the changes you have made
-
-(Please note: I haven't got complete coverage yet, so I'm not really practicing what I preach. I'm working on it - feel free to help out!)
 
 == Status
 

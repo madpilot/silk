@@ -16,7 +16,7 @@ class Options
  
       opts.on('-h', '--help', "You're looking at it") do
         puts opts
-        exit(-1)
+        exit(1)
       end
  
       options[:ontop] = false
@@ -42,13 +42,13 @@ class Options
       end
 
       options[:bind] = '0.0.0.0'
-      opts.on('-b', '--bind', /.+/, 'Set the IP address to listen to') do |host|
+      opts.on('-b [address]', '--bind', /.+/, 'Set the IP address to listen to') do |host|
         options[:bind] = host
       end
 
       options[:server] = %w[thin mongrel webrick]
-      opts.on('-s', '--server', /.+/, 'handler used for built-in web server') do |server|
-        options[:server] = server
+      opts.on('-s [server list]', '--server', /.+/, 'handler used for built-in web server') do |server|
+        options[:server] = [ server ]
       end
  
       opts.on('-v', '--version') do

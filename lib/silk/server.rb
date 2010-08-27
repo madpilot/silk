@@ -4,19 +4,32 @@ require 'sinatra/base'
 module Silk
   class Server < Sinatra::Base
     get %r{\/(.+)} do |c|
-      content_type('application/json')
-
       options = Silk.options
-      task = c.gsub("/", ":")
+      task = nil
+      format = 'text'
       
+      query = c.split('.')
+      format = query.pop if query.size > 1
+      task = query.join('.').gsub("/", ":")
+     
+      case(format)
+      when 'json'
+        content_type('application/json')
+      when 'xml'
+        content_type('application/xml')
+      else
+        content_type('text/plain')
+      end
+
       tasks = Silk::Tasks.new
       unless tasks.list.include?(task)
-        not_found("Not Found".to_json)
+        not_found("Not Found")
       end
 
       results = { :stdout => '', :stderr => '' }
       params.delete("captures")
-      
+      ENV['format'] = format
+
       stdout_read, stdout_write = IO.pipe
       stderr_read, stderr_write = IO.pipe
       pid = Process.fork do
@@ -35,11 +48,11 @@ module Silk
       stderr_read.each do |line|
         results[:stderr] += line
       end
-      Process.waitpid(pid)
+      pid, status = Process.waitpid2(pid)
     
-      headers('X_PROCESS_EXIT_STATUS' => $?.exitstatus.to_s)
-      
-      if $?.exitstatus != 0
+      headers('X_PROCESS_EXIT_STATUS' => status.exitstatus.to_s)
+     
+      if status.exitstatus != 0
         error(500, results[:stderr].strip)
       else
         results[:stdout].strip

@@ -7,6 +7,7 @@ require 'daemons'
 require 'options'
 require 'server'
 require 'tasks'
+require 'dsl'
 
 module Silk
   def self.run
