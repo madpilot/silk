@@ -24,9 +24,9 @@ for full argument descriptions.
 
 The system automatically converts the rest URL (only GETs at the moment) into a rake task name - if the name doesn't exist, you'll get a 404. Any query params get passed into the task
 
-So http://localhost:8888/users/get?login=myles (Returns Plain text)
-So http://localhost:8888/users/get.json?login=myles (Returns JSON)
-So http://localhost:8888/users/get.xml?login=myles (Returns XML)
+  So http://localhost:8888/users/get?login=myles (Returns Plain text)
+  So http://localhost:8888/users/get.json?login=myles (Returns JSON)
+  So http://localhost:8888/users/get.xml?login=myles (Returns XML)
 
 would run the users:get task. do something like this in the rake task:
 
