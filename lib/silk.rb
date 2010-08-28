@@ -6,8 +6,8 @@ require 'syslog_logger'
 require 'daemons'
 require 'options'
 require 'server'
-require 'tasks'
 require 'dsl'
+require 'tasks'
 
 module Silk
   def self.run

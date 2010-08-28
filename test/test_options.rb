@@ -89,7 +89,7 @@ class TestOptions < Test::Unit::TestCase
       assert_equal [ '/etc/silk', '/home/john/.silk', '/tmp/recipes', '/tmp/recipes_2' ], options[:recipe_paths]
     end
 
-    should 'add recipes to the recipe list for each -r' do
+    should 'add recipes to the recipe list for each --recipes' do
       ARGV << '--recipes'
       ARGV << '/tmp/recipes'
       options = Options.parse
@@ -151,7 +151,7 @@ class TestOptions < Test::Unit::TestCase
       assert_equal [ 'iis' ], options[:server]
     end
 
-    should 'set the server array if -s is set' do
+    should 'set the server array if --server is set' do
       ARGV << '--server'
       ARGV << 'iis'
       options = Options.parse
@@ -168,13 +168,23 @@ class TestOptions < Test::Unit::TestCase
         stdout_read.close
         options = Options.parse
       end
-      
+     
+      result = ''
       stdout_write.close
+      stdout_read.each do |line|
+        result += line
+      end
       pid, status = Process.waitpid2(pid)
-      assert_equal -1, status.exitstatus
+      assert_equal 1, status.exitstatus
+      version = ''
+      
+      File.open(File.join(File.dirname(__FILE__), '..', 'VERSION')) do |fh|
+        version = fh.read
+      end
+      assert_equal result, version
     end
 
-    should 'display the VERSION of -v is set' do
+    should 'display the VERSION of --version is set' do
       ARGV << '--version'
       
       stdout_read, stdout_write = IO.pipe
@@ -191,7 +201,8 @@ class TestOptions < Test::Unit::TestCase
         result += line
       end
       pid, status = Process.waitpid2(pid)
-      assert_equal 0, status.exitstatus
+      assert_equal 1, status.exitstatus
+      
       version = ''
       File.open(File.join(File.dirname(__FILE__), '..', 'VERSION')) do |fh|
         version = fh.read

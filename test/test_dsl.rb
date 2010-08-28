@@ -1,7 +1,45 @@
 require 'test_helper'
 
+class FakeRake
+  include Silk::DSL
+end
+
 class TestDSL < Test::Unit::TestCase
   context 'TestDSL' do
+    setup do
+      @context = FakeRake.new
+    end
+
+    context 'ProcessResult' do
+      setup do
+        @result = Silk::DSL::ProcessResult.new('Standard Output', 'Standard Error', 0)
+      end
+
+      context 'to_xml' do
+        should 'return an XML representation of the object'
+      end
+
+      context 'to_json' do
+        should 'return an JSON respresentation of the object' do
+          obj = JSON::parse(@result.to_json)
+          assert_equal 'Standard Output', obj['stdout']
+          assert_equal 'Standard Error', obj['stderr']
+          assert_equal 0, obj['exitstatus']
+        end
+      end
+
+      context 'to_s' do
+        should 'return stdout if defined' do
+          assert_equal 'Standard Output', @result.to_s
+        end
+        
+        should 'return stderr if stdout if not defined' do
+          @result.stdout = nil
+          assert_equal 'Standard Error', @result.to_s
+        end
+      end
+    end
+
     context 'respond_to' do
       should 'call the text block if ENV[format] == text' do
         ENV['format'] = 'text'
@@ -11,7 +49,7 @@ class TestDSL < Test::Unit::TestCase
           $stdout.reopen stdout_write
           stdout_read.close
           
-          respond_to do |format|
+          @context.respond_to do |format|
             format.text { 'text' }
             format.json { 'json'.to_json }
             format.xml { '<xml>xml</xml>' }
@@ -35,7 +73,7 @@ class TestDSL < Test::Unit::TestCase
           $stdout.reopen stdout_write
           stdout_read.close
           
-          respond_to do |format|
+          @context.respond_to do |format|
             format.text { 'text' }
             format.json { 'json'.to_json }
             format.xml { '<xml>xml</xml>' }
@@ -59,7 +97,7 @@ class TestDSL < Test::Unit::TestCase
           $stdout.reopen stdout_write
           stdout_read.close
           
-          respond_to do |format|
+          @context.respond_to do |format|
             format.text { 'text' }
             format.json { 'json'.to_json }
             format.xml { '<xml>xml</xml>' }
@@ -85,7 +123,7 @@ class TestDSL < Test::Unit::TestCase
           $stderr.reopen stderr_write
           stderr_read.close
           
-          error_respond_to do |format|
+          @context.error_respond_to do |format|
             format.text { 'text' }
             format.json { 'json'.to_json }
             format.xml { '<xml>xml</xml>' }
@@ -109,7 +147,8 @@ class TestDSL < Test::Unit::TestCase
           $stderr.reopen stderr_write
           stderr_read.close
           
-          error_respond_to do |format|
+          
+          @context.error_respond_to do |format|
             format.text { 'text' }
             format.json { 'json'.to_json }
             format.xml { '<xml>xml</xml>' }
@@ -133,7 +172,7 @@ class TestDSL < Test::Unit::TestCase
           $stderr.reopen stderr_write
           stderr_read.close
           
-          error_respond_to do |format|
+          @context.error_respond_to do |format|
             format.text { 'text' }
             format.json { 'json'.to_json }
             format.xml { '<xml>xml</xml>' }
@@ -147,6 +186,28 @@ class TestDSL < Test::Unit::TestCase
         end
         Process.waitpid(pid)
         assert_equal 'json'.to_json, stderr.strip
+      end
+    end
+
+    context 'run' do
+      should 'capture standard input and return a ProcessResult object' do
+        result = @context.run File.join(File.dirname(__FILE__), '..', 'test', 'bin', 'successful')
+        assert_equal Silk::DSL::ProcessResult, result.class
+      end
+
+      should 'set the stdout value' do
+        result = @context.run File.join(File.dirname(__FILE__), '..', 'test', 'bin', 'successful')
+        assert_equal 'Success!', result.stdout.strip
+      end
+      
+      should 'set the stdout value' do
+        result = @context.run File.join(File.dirname(__FILE__), '..', 'test', 'bin', 'failure')
+        assert_equal 'Fail :(', result.stderr.strip
+      end
+      
+      should 'set the exitstatus value' do
+        result = @context.run File.join(File.dirname(__FILE__), '..', 'test', 'bin', 'failure')
+        assert_equal 1, result.exitstatus
       end
     end
   end

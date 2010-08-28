@@ -2,6 +2,8 @@ require 'rake'
 
 module Silk
   class Tasks
+    include DSL
+
     def initialize
       Rake::Task.clear
       @app = Rake::Application.new

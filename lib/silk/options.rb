@@ -55,7 +55,7 @@ class Options
         File.open(File.join(File.dirname(__FILE__), '..', '..', 'VERSION')) do |fh|
           puts fh.read
         end
-        exit(0)
+        exit(1)
       end
     end
  
@@ -64,7 +64,7 @@ class Options
       options
     rescue OptionParser::InvalidOption => e
       puts optparse
-      exit(-1)
+      exit(1)
     end
   end
 end
