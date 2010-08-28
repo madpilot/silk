@@ -1,5 +1,14 @@
 require 'test_helper'
 
+# Need some helper classes so we can call the methods defined in the rake include file
+eval <<-EOF
+  module Silk
+    module DSL
+      #{File.read(File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib', 'silk', 'dsl.rake')))}
+    end
+  end
+EOF
+
 class FakeRake
   include Silk::DSL
 end

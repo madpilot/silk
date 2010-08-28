@@ -2,12 +2,12 @@ require 'rake'
 
 module Silk
   class Tasks
-    include DSL
-
     def initialize
       Rake::Task.clear
       @app = Rake::Application.new
       @app.init
+      @app.rake_require 'dsl'
+      
       Silk.options[:recipe_paths].each do |path|
         FileList.new("#{path}/*.rake").each do |file|
           @app.add_import(file)
@@ -21,7 +21,8 @@ module Silk
     end
 
     def run(task, arguments = {})
-      Rake::Task[task].execute(arguments)
+      task = Rake::Task[task]
+      task.execute(arguments)
     end
   end
 end

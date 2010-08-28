@@ -6,7 +6,6 @@ require 'syslog_logger'
 require 'daemons'
 require 'options'
 require 'server'
-require 'dsl'
 require 'tasks'
 
 module Silk
