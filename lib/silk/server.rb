@@ -3,12 +3,12 @@ require 'sinatra/base'
 
 module Silk
   class Server < Sinatra::Base
-    get %r{\/(.+)} do |c|
+    def process(context, params)
       options = Silk.options
       task = nil
       format = 'text'
       
-      query = c.split('.')
+      query = context.split('.')
       format = query.pop if query.size > 1
       task = query.join('.').gsub("/", ":")
      
@@ -20,43 +20,38 @@ module Silk
       else
         content_type('text/plain')
       end
-
-      tasks = Silk::Tasks.new
-      unless tasks.list.include?(task)
-        not_found("Not Found")
-      end
-
-      results = { :stdout => '', :stderr => '' }
-      params.delete("captures")
-      ENV['format'] = format
-
-      stdout_read, stdout_write = IO.pipe
-      stderr_read, stderr_write = IO.pipe
-      pid = Process.fork do
-        $stdout.reopen stdout_write
-        $stderr.reopen stderr_write
-        stdout_read.close
-        stderr_read.close
-        tasks.run(task, params)
-      end
       
-      stdout_write.close
-      stderr_write.close
-      stdout_read.each do |line|
-        results[:stdout] += line
+      ENV['format'] = format
+ 
+      begin
+        results = Runner.execute(task, params)
+        headers('X_PROCESS_EXIT_STATUS' => results[:status].exitstatus.to_s)
+       
+        if results[:status].exitstatus != 0
+          error(500, results[:stderr])
+        else
+          results[:stdout]
+        end
+      
+      rescue Silk::Exceptions::TaskNotFound
+        not_found("Not found")
       end
-      stderr_read.each do |line|
-        results[:stderr] += line
-      end
-      pid, status = Process.waitpid2(pid)
+    end
+
+    get %r{\/(.+)} do |context|
+      process context, params
+    end
+
+    post %r{\/(.+)} do |context|
+      process context, params
+    end
     
-      headers('X_PROCESS_EXIT_STATUS' => status.exitstatus.to_s)
-     
-      if status.exitstatus != 0
-        error(500, results[:stderr].strip)
-      else
-        results[:stdout].strip
-      end
+    put %r{\/(.+)} do |context|
+      process context, params
+    end
+    
+    delete %r{\/(.+)} do |context|
+      process context, params
     end
 
     not_found do

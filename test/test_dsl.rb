@@ -209,7 +209,7 @@ class TestDSL < Test::Unit::TestCase
         assert_equal 'Success!', result.stdout.strip
       end
       
-      should 'set the stdout value' do
+      should 'set the stderr value' do
         result = @context.run File.join(File.dirname(__FILE__), '..', 'test', 'bin', 'failure')
         assert_equal 'Fail :(', result.stderr.strip
       end

@@ -5,6 +5,8 @@ require 'rake'
 require 'syslog_logger'
 require 'daemons'
 require 'options'
+require 'runner'
+require 'exceptions/task_not_found'
 require 'server'
 require 'tasks'
 
@@ -25,7 +27,11 @@ module Silk
     Daemons.call(options) do
       $0 = old_proc_name
       Dir.chdir pwd
-      Server.run! :host => options[:bind], :port => options[:port], :environment => :production
+      if options[:test]
+        puts Runner.test(options[:test_task], options[:test_params]) 
+      else
+        Server.run! :host => options[:bind], :port => options[:port], :environment => :production
+      end
     end
   end
 

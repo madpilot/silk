@@ -44,6 +44,15 @@ class TestSilk < Test::Unit::TestCase
         Silk::Server.expects(:run!).with({ :host => '1.2.3.4', :port => 80, :environment => :production })
         Silk.run
       end
+
+      should 'use run the test runner if in test mode' do
+        logger_mock = mock
+        options = { :test => true, :test_task => 'test:task', :test_params => { 'test' => 'param' } }
+        Options.stubs(:parse).returns(options)
+        Logger.stubs(:new).returns(logger_mock)
+        Silk::Runner.expects(:test).with('test:task', { 'test' => 'param' })
+        Silk.run
+      end
     end
   end
 end

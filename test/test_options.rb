@@ -158,6 +158,55 @@ class TestOptions < Test::Unit::TestCase
       assert_equal [ 'iis' ], options[:server]
     end
 
+    should 'set the test flag if -t is set' do
+      ARGV << '-t'
+      options = Options.parse
+      assert options[:test]
+    end
+
+    should 'set the test flag if --test is set' do
+      ARGV << '--test'
+      ARGV << "test:task"
+      options = Options.parse
+      assert options[:test]
+      assert_equal "test:task", options[:test_task]
+    end
+
+    should 'set the ontop flag if -t is set' do
+      ARGV << '-t'
+      ARGV << "test:task"
+      options = Options.parse
+      assert_equal true, options[:ontop]
+      assert_equal "test:task", options[:test_task]
+    end
+
+    should 'set the optop flag if --test is set' do
+      ARGV << '--test'
+      options = Options.parse
+      assert_equal true, options[:ontop]
+    end
+   
+    should 'add params to the test_params array if --param is set' do
+      ARGV << '--param'
+      ARGV << 'user=joe'
+      options = Options.parse
+      assert_equal 'joe', options[:test_params]['user']
+    end
+
+    should 'add params to the test_params array if --paramaters is set' do
+      ARGV << '--parameter'
+      ARGV << 'user=joe'
+      options = Options.parse
+      assert_equal 'joe', options[:test_params]['user']
+    end
+
+    should 'set the format environment variable if --format is set' do
+      ARGV << '--format'
+      ARGV << 'json'
+      options = Options.parse
+      assert_equal 'json', ENV['format']
+    end
+
     should 'display the VERSION of -v is set' do
       ARGV << '-v'
       

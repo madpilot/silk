@@ -50,7 +50,25 @@ class Options
       opts.on('-s [server list]', '--server', /.+/, 'handler used for built-in web server') do |server|
         options[:server] = [ server ]
       end
- 
+
+      options[:test] = false
+      options[:test_task] = nil
+      opts.on('-t [task]', '--test', /.+/, 'Test the supplied rake task on the command line') do |test|
+        options[:test] = true
+        options[:test_task] = test
+        options[:ontop] = true
+      end
+
+      options[:test_params] = {}
+      opts.on('--param [param]', '--parameter', /.+/, 'Parameters to pass in to the test task. Enter as key/value pairs, ie user=joe') do |param|
+        k, v = param.split('=')
+        options[:test_params][k] = v
+      end
+
+      opts.on('--format [format]', /.+/, 'Output format') do |format|
+        ENV['format'] = format
+      end
+
       opts.on('-v', '--version') do
         File.open(File.join(File.dirname(__FILE__), '..', '..', 'VERSION')) do |fh|
           puts fh.read
