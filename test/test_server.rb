@@ -12,32 +12,38 @@ class TestServer < Test::Unit::TestCase
       Silk.options = { :recipe_paths => File.join(File.dirname(File.expand_path(__FILE__)), 'rakefiles') }
     end
 
+    should 'return simple 404 if the task is not found' do
+      get '/'
+      assert last_response.not_found?
+      assert_match "Not found", last_response.body
+    end
+
     context 'mime_types' do
       should "return 'text/plain' if there is no format" do
         get '/level_1/level_2'
         assert last_response.ok?
-        assert_equal "text/plain", last_response.headers['Content-Type']
+        assert_match /text\/plain/, last_response.headers['Content-Type']
         assert_equal "text", last_response.body
       end
       
       should "return 'text/plain' if the format isn't recognised" do
         get '/level_1/level_2.csv'
         assert last_response.ok?
-        assert_equal "text/plain", last_response.headers['Content-Type']
+        assert_match /text\/plain/, last_response.headers['Content-Type']
         assert_equal "text", last_response.body
       end
       
       should "return 'application/json' if there is no format" do
         get '/level_1/level_2.json'
         assert last_response.ok?
-        assert_equal "application/json", last_response.headers['Content-Type']
+        assert_match /application\/json/, last_response.headers['Content-Type']
         assert_equal "json".to_json, last_response.body
       end
       
       should "return 'application/xml' if there is no format" do
         get '/level_1/level_2.xml'
         assert last_response.ok?
-        assert_equal "application/xml", last_response.headers['Content-Type']
+        assert_match /application\/xml/, last_response.headers['Content-Type']
         assert_equal "<xml>xml</xml>", last_response.body
       end
     end

@@ -58,5 +58,9 @@ module Silk
         results[:stdout].strip
       end
     end
+
+    not_found do
+      'Not found'
+    end
   end
 end
