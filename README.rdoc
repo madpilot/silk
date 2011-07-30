@@ -58,15 +58,35 @@ By default it runs on port 8888 and will probably need to be run as root to make
 
 Eventually it'll support SSL certificates etc, but until then, I suggest you either use SSH tunnels, and/or (at the very least) lock down via a firewall. You could also build a rack.up file, and run it behind a web server that gives you more control (Rack.up file is on the todo list).
 
-== Testing
+== Testing your recipes
+
+There are two ways to test your recipes - you can chose to just run them on the command line, using the -t switch
+
+  silk -t --param user=joe --param email=joe@blogs.com --format json
+
+or via unit tests.
+
+  require 'silk'
+
+  class TestDSL < Test::Unit::TestCase
+    results = Runner.execute('task:name', { 'user' => 'joe', 'email' => 'joe@blogs.com' })
+  end
+
+the results hash will have three elements: stdout, stderr and a process result object
+
+  results[:stdout]
+  results[:stderr]
+  results[:status]
+
+To get the exit status of the task:
+
+ status = results[:status].exitstatus
+
+== Testing Silk
 
 There is a test suite. It uses shoulda + mocha + test::rack
 
 If you are going to submit patches, please try to make sure the tests pass, and that you have created a test covering the changes you have made
-
-== Status
-
-This is a really early release, that still needs more testing (This is so far more proof of concept at this point), and may blow up at any given moment. Feel free to fork and help out.
 
 == Note on Patches/Pull Requests
  
@@ -81,4 +101,4 @@ This is a really early release, that still needs more testing (This is so far mo
 
 == Copyright
 
-Copyright (c) 2010 Myles Eftos. See LICENSE for details.
+Copyright (c) 2010,2011 Myles Eftos. See LICENSE for details.
