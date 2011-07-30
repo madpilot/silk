@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{silk}
-  s.version = "0.0.4"
+  s.version = "0.0.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Myles Eftos"]
@@ -30,7 +30,9 @@ Gem::Specification.new do |s|
     "install.rb",
     "lib/silk.rb",
     "lib/silk/dsl.rake",
+    "lib/silk/exceptions/task_not_found.rb",
     "lib/silk/options.rb",
+    "lib/silk/runner.rb",
     "lib/silk/server.rb",
     "lib/silk/tasks.rb",
     "silk.gemspec",
@@ -41,6 +43,7 @@ Gem::Specification.new do |s|
     "test/test_dsl.rb",
     "test/test_helper.rb",
     "test/test_options.rb",
+    "test/test_runner.rb",
     "test/test_server.rb",
     "test/test_silk.rb",
     "test/test_tasks.rb"
