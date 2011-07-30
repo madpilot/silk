@@ -56,7 +56,38 @@ NOTE: The idea is you write your own rake task to do stuff, and then interface t
 
 By default it runs on port 8888 and will probably need to be run as root to make sure you can do all the stuff you need to do. 
 
-Eventually it'll support SSL certificates etc, but until then, I suggest you either use SSH tunnels, and/or (at the very least) lock down via a firewall. You could also build a rack.up file, and run it behind a web server that gives you more control (Rack.up file is on the todo list).
+Eventually it'll support SSL certificates etc, but until then, I suggest you either use SSH tunnels, and/or (at the very least) lock down via a firewall. 
+
+== Racking it up
+
+You can run Silk as a Rack app, which will allow you to run Silk in Passenger, or other Rack-compatible servers.
+
+First, create a Gemfile
+
+  gem 'silk', :version => '>= 0.6'
+
+then run
+
+  bundle install
+
+At the moment, you have to create an empty Rakefile
+
+  touch Rakefile
+
+Here is a sample config.ru file
+
+  require 'rubygems'
+  require 'bundler'
+  Bundler.require
+
+  Silk.options = { :recipe_paths => [ File.join(File.dirname(__FILE__), 'recipes') ] }
+  run Silk::Application
+
+Then to test you can run rackup
+
+  rackup ./config.ru
+
+Put your .rake files in the recipes directory, and you can hit the rackup test server on port 9292
 
 == Testing your recipes
 

@@ -8,6 +8,7 @@ require 'options'
 require 'runner'
 require 'exceptions/task_not_found'
 require 'server'
+require 'application'
 require 'tasks'
 
 module Silk
